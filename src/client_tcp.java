@@ -1,26 +1,39 @@
 import java.io.*;
-import java.net.*;
+import java.net.Socket;
+import java.util.Scanner;
+
 
 public class client_tcp {
-    private Socket clientSocket;
-    private PrintWriter out;
-    private BufferedReader in;
+    public static void main(String[] args) throws IOException{
+        String host = "127.0.0.1";
+        int port = 11111;
 
-    public void startConnection(String ip, int port) throws IOException {
-        clientSocket = new Socket(ip, port);
-        out = new PrintWriter(clientSocket.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-    }
 
-    public String sendMessage(String msg) throws IOException {
-        out.println(msg);
-        String resp = in.readLine();
-        return resp;
-    }
 
-    public void stopConnection() throws IOException {
-        in.close();
-        out.close();
-        clientSocket.close();
+        while (true){
+            Socket socket = new Socket(host, port);
+            OutputStream outputStream = socket.getOutputStream();
+            PrintWriter writer = new PrintWriter(outputStream, true);
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("write something:");
+            writer.println(scanner.nextLine());
+            //writer.println("This is a message sent to the server");
+
+            socket.shutdownOutput();
+
+            InputStream inputStream = socket.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line = reader.readLine();
+            System.out.println("massage: " + line);
+
+
+            inputStream.close();
+            outputStream.close();
+            socket.close();
+            if(line.equalsIgnoreCase("close")){
+                break;
+            }
+        }
+
     }
 }

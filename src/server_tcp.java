@@ -1,35 +1,37 @@
 import java.io.*;
-import java.net.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+
 
 public class server_tcp {
-    private ServerSocket serverSocket;
-    private Socket clientSocket;
-    private PrintWriter out;
-    private BufferedReader in;
+    public static void main(String[] args) throws IOException{
+        int port = 11111;
+        ServerSocket server = new ServerSocket(port);
 
-    public void start(int port) throws IOException, InterruptedException {
-        serverSocket = new ServerSocket(port);
-        clientSocket = serverSocket.accept();
-        out = new PrintWriter(clientSocket.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         while(true){
-            String greeting = in.readLine();
-            System.out.println(greeting);
-            if(greeting.equalsIgnoreCase("stop")){
-                stop();
+            System.out.println("server start waiting for input");
+            Socket socket = server.accept();
+
+            InputStream inputStream = socket.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line = reader.readLine();
+            System.out.println("massage: " + line);
+
+            OutputStream outputStream = socket.getOutputStream();
+            PrintWriter writer = new PrintWriter(outputStream, true);
+            writer.println(line);
+
+            outputStream.close();
+            inputStream.close();
+
+            if(line.equalsIgnoreCase("close")){
+                socket.close();
+                server.close();
+                break;
             }
         }
 
     }
 
-    public void stop() throws IOException {
-        in.close();
-        out.close();
-        clientSocket.close();
-        serverSocket.close();
-    }
-    public static void main(String[] args) throws IOException, InterruptedException {
-        server_tcp server=new server_tcp();
-        server.start(6666);
-    }
 }
