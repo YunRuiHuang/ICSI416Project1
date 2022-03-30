@@ -18,20 +18,43 @@ public class server_tcp {
             String line = reader.readLine();
             System.out.println("massage: " + line);
 
-            OutputStream outputStream = socket.getOutputStream();
-            PrintWriter writer = new PrintWriter(outputStream, true);
-            writer.println(line);
+            massage(socket, line);
 
-            outputStream.close();
             inputStream.close();
-
             if(line.equalsIgnoreCase("close")){
                 socket.close();
                 server.close();
                 break;
+            }else if(line.equalsIgnoreCase("quit")){
+                socket.close();
             }
         }
 
+    }
+
+    private static void putMethod(){
+
+    }
+
+    private static void getMethod(){
+
+    }
+
+    private static void remap(){
+
+    }
+
+    private static void ifExist(){
+
+    }
+
+    private static void massage(Socket socket, String line) throws IOException {
+
+        OutputStream outputStream = socket.getOutputStream();
+        PrintWriter writer = new PrintWriter(outputStream, true);
+        writer.println(line);
+
+        outputStream.close();
     }
 
 }
