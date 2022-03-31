@@ -9,10 +9,8 @@ public class client_tcp {
         String host = "127.0.0.1";
         int port = 11111;
 
-
-
         while (true){
-            Socket socket = new Socket(host, port);
+
 
             Scanner scanner = new Scanner(System.in);
             System.out.println("write something:");
@@ -22,15 +20,15 @@ public class client_tcp {
             if(temp[0] != null){
                 if(temp[0].equalsIgnoreCase("put")){
                     //put method
-                    line = putMethod(socket, temp[1]);
+                    line = putMethod(host, port, temp[1]);
                 }else if(temp[0].equalsIgnoreCase("get")){
                     //get method
-                    line = getMethod(socket, temp[1]);
+                    line = getMethod(host, port, temp[1]);
                 }else if(temp[0].equalsIgnoreCase("remap")){
                     //remap method
-                    line = remap(socket, temp[2], Integer.parseInt(temp[1]));
+                    line = remap(host, port, temp[2], Integer.parseInt(temp[1]));
                 }else{
-                    line = massage(socket, command);
+                    line = massage(host, port, command);
                 }
 
             }else{
@@ -48,27 +46,75 @@ public class client_tcp {
 
     }
 
-    private static String putMethod(Socket socket, String fileName){
-        return null;
+    private static String putMethod(String host, int port, String fileName) throws IOException {
+        Socket socket = new Socket(host, port);
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
+        PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
+        printWriter.println("put " + fileName);
+        String line;
+        while ((line = bufferedReader.readLine()) != null){
+            printWriter.println(line);
+        }
+        socket.shutdownOutput();
+
+        InputStream inputStream = socket.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        line = reader.readLine();
+        System.out.println("massage: " + line);
+
+
+        inputStream.close();
+        socket.close();
+        return line;
+
     }
 
-    private static String getMethod(Socket socket, String fileName){
-        return null;
+    private static String getMethod(String host, int port, String fileName) throws IOException {
+        Socket socket = new Socket(host, port);
+        OutputStream outputStream = socket.getOutputStream();
+        PrintWriter writer = new PrintWriter(outputStream, true);
 
+        writer.println("get " + fileName);
+        //writer.println("This is a message sent to the server");
+
+        socket.shutdownOutput();
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+        //
+        PrintWriter out = new PrintWriter(new FileWriter("2" + fileName),true);
+        String line;
+        while((line = bufferedReader.readLine()) != null){
+            out.println(line);
+        }
+
+        bufferedReader.close();
+        out.close();
+        return "finish";
     }
 
-    private static String remap(Socket socket, String fileName, int N){
+    private static String remap(String host, int port, String fileName, int N) throws IOException {
 
-        return null;
+        putMethod(host, port, fileName);
+        Socket socket = new Socket(host, port);
+        OutputStream outputStream = socket.getOutputStream();
+        PrintWriter writer = new PrintWriter(outputStream, true);
+
+        writer.println("remap " + fileName + " " +  N);
+        socket.shutdownOutput();
+
+        InputStream inputStream = socket.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        String line = reader.readLine();
+        System.out.println("massage: " + line);
+        outputStream.close();
+        socket.close();
+        return "null";
     }
 
-    private static boolean ifExist(Socket socket, String fileName){
 
-        return true;
-    }
+    private static String massage(String host, int port, String msg) throws IOException {
 
-    private static String massage(Socket socket, String msg) throws IOException {
-
+        Socket socket = new Socket(host, port);
         OutputStream outputStream = socket.getOutputStream();
         PrintWriter writer = new PrintWriter(outputStream, true);
 
