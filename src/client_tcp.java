@@ -6,8 +6,8 @@ import java.util.Scanner;
 
 public class client_tcp {
     public static void main(String[] args) throws IOException{
-        String host = "127.0.0.1";
-        int port = 11111;
+        String host= args[0];
+        int port = Integer.parseInt(args[1]);
 
         while (true){
 
