@@ -6,11 +6,11 @@ import java.net.Socket;
 
 public class server_tcp {
     public static void main(String[] args) throws IOException{
-        int port = 11111;
+        int port = Integer.parseInt(args[0]);
         ServerSocket server = new ServerSocket(port);
 
         while(true){
-            System.out.println("server start waiting for input");
+            System.out.println("server start waiting for input at port " + port);
             Socket socket = server.accept();
 
             InputStream inputStream = socket.getInputStream();
@@ -58,7 +58,7 @@ public class server_tcp {
         }
         socket.shutdownInput();
         PrintWriter printWriter = new PrintWriter(socket.getOutputStream(),true);
-        printWriter.println("Uploading Successfully -- 上传成功");
+        printWriter.println("file upload");
         //
 
         bufferedReader.close();
