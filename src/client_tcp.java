@@ -13,7 +13,7 @@ public class client_tcp {
 
 
             Scanner scanner = new Scanner(System.in);
-            System.out.println("write something:");
+            System.out.println("Enter Command:");
             String command = scanner.nextLine();
             String[] temp = command.split(" ");
             String line;
@@ -40,6 +40,7 @@ public class client_tcp {
 
 
             if(line.equalsIgnoreCase("close") || line.equalsIgnoreCase("quit")){
+                System.out.println("Exiting!");
                 break;
             }
         }
@@ -81,7 +82,7 @@ public class client_tcp {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
         //
-        PrintWriter out = new PrintWriter(new FileWriter("2" + fileName),true);
+        PrintWriter out = new PrintWriter(new FileWriter("1" + fileName),true);
         String line;
         while((line = bufferedReader.readLine()) != null){
             out.println(line);
@@ -89,6 +90,7 @@ public class client_tcp {
 
         bufferedReader.close();
         out.close();
+        System.out.println("massage: " + fileName + " Downloaded, rename as : 1" + fileName);
         return "finish";
     }
 
@@ -106,6 +108,7 @@ public class client_tcp {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String line = reader.readLine();
         System.out.println("massage: " + line);
+        reader.close();
         outputStream.close();
         socket.close();
         return "null";

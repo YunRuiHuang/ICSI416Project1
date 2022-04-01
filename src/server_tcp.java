@@ -51,14 +51,14 @@ public class server_tcp {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
         //
-        PrintWriter out = new PrintWriter(new FileWriter("1" + fileName),true);
+        PrintWriter out = new PrintWriter(new FileWriter("2" + fileName),true);
         String line;
         while((line = bufferedReader.readLine()) != null){
             out.println(line);
         }
         socket.shutdownInput();
         PrintWriter printWriter = new PrintWriter(socket.getOutputStream(),true);
-        printWriter.println("file upload");
+        printWriter.println("file upload, rename as : 2" + fileName);
         //
 
         bufferedReader.close();
@@ -107,7 +107,7 @@ public class server_tcp {
         while(bufferedReader.ready()){
             ch = (char)bufferedReader.read();
             if((int)ch > 96 && (int)ch < 123){
-                ch = (char)((int)ch - moveN);
+                ch = (char)((int)ch + moveN);
                 if((int)ch < 97){
                     ch = (char)((int)ch + 26);
                 }else if((int)ch > 122){
@@ -120,7 +120,7 @@ public class server_tcp {
 
         OutputStream outputStream = socket.getOutputStream();
         PrintWriter writer = new PrintWriter(outputStream, true);
-        writer.println("new file is: " + remapFileName[0] + "_remap." + remapFileName[1]);
+        writer.println("Output file is: " + remapFileName[0] + "_remap." + remapFileName[1]);
 
         outputStream.close();
 
