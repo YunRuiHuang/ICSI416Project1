@@ -5,8 +5,23 @@ import java.net.InetAddress;
 import java.nio.file.LinkPermission;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * author Yunrui Huang
+ * ICSI416
+ * 2022/03/31
+ */
+
 public class server_udp {
 
+    /**
+     * the main method use to run the UDP server
+     * @param args
+     * input accept port, which should be $java server_udp [port]
+     * @throws IOException
+     * throw the IOException
+     * @throws InterruptedException
+     * throw the InterruptedException
+     */
     public static void main(String[] args) throws IOException, InterruptedException {
         int port = Integer.parseInt(args[0]);
         while (true){
@@ -46,6 +61,20 @@ public class server_udp {
 
     }
 
+    /**
+     * put method used to put the file from client to server
+     * @param socket
+     * the socket of this server
+     * @param packet
+     * the packet use to send by the socket
+     * @param packSize
+     * the packet size of each packet
+     * @param fileName
+     * the file name ready to upload to server
+     * @throws IOException
+     * throw the IOException
+     */
+
     private static void put(DatagramSocket socket, DatagramPacket packet,byte[] packSize, String fileName) throws IOException {
         File file = new File("2" + fileName);
         FileOutputStream output = new FileOutputStream(file);
@@ -68,6 +97,7 @@ public class server_udp {
 //                System.out.println("now is : " + LEN);
                 output.flush();
 
+                //send the ACK packet
                 packSize = "ACK".getBytes();
                 packet = new DatagramPacket(packSize, packSize.length, packet.getAddress(), packet.getPort());
                 socket.send(packet);
@@ -82,6 +112,19 @@ public class server_udp {
 
     }
 
+    /**
+     * get method use to download the file from server to client
+     * @param socket
+     * the socket of the server
+     * @param packet
+     * the packet use to send by the socket
+     * @param fileName
+     * the file name ready to download to client
+     * @throws IOException
+     * throw the IOException
+     * @throws InterruptedException
+     * throw the InterruptedException
+     */
     private static void get(DatagramSocket socket, DatagramPacket packet, String fileName) throws IOException, InterruptedException {
         byte[] sendPacket = new byte[1024];
         InetAddress address = packet.getAddress();
@@ -103,7 +146,9 @@ public class server_udp {
                     socket.send(packet);
 //                    System.out.println(sendPacket.length);
 //                TimeUnit.MILLISECONDS.sleep(10);
+
                     socket.receive(packet); //Wait for ACK packet
+
 //                    System.out.println("file is: " + new String(sendPacket,0,packet.getLength()));
 
 
@@ -122,6 +167,17 @@ public class server_udp {
 
     }
 
+    /**
+     * remap the file data in a new file on server
+     * @param socket
+     * the socket of the server
+     * @param packet
+     * the packet use to send by the socket
+     * @param input
+     * the command from the client which should look like $remap [number] [filename]
+     * @throws IOException
+     * throw the IOException
+     */
     private static void remap(DatagramSocket socket, DatagramPacket packet, String input) throws IOException {
 
         String[] msg = input.split(" ");
@@ -157,6 +213,17 @@ public class server_udp {
     }
 
 
+    /**
+     * the message use to receive the massage from client
+     * @param socket
+     * the socket of the server
+     * @param packet
+     * the packet use to send by the socket
+     * @param input
+     * the massage from the client
+     * @throws IOException
+     * theow the IOException
+     */
     private static void massage(DatagramSocket socket, DatagramPacket packet, String input) throws IOException {
         InetAddress address = packet.getAddress();
         int port = packet.getPort();
